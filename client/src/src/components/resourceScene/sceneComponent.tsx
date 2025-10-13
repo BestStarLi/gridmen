@@ -11,6 +11,7 @@ import {
     ChevronRight,
     CloudDownload,
 } from 'lucide-react'
+import Store from '@/store'
 import { cn } from '@/utils/utils'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
@@ -22,9 +23,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { ISceneNode, ISceneTree } from '@/core/scene/iscene'
 import { ContextMenu, ContextMenuTrigger } from '@/components/ui/context-menu'
-import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogPortal } from '../ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import Store from '@/store'
+import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogPortal } from '../ui/dialog'
 
 interface TreeNodeProps {
     node: ISceneNode
@@ -61,7 +61,7 @@ export const NodeRenderer: React.FC<TreeNodeProps> = ({ node, privateTree, publi
     const isExpanded = tree.isNodeExpanded(node.id)
     const isSelected = tree.selectedNode?.id === node.id
     const { t } = useTranslation("resourceScene")
-    
+
     // Check if create resource dialog is open
     const isCreateResourceDialogOpen = Store.get<boolean>('isCreateResourceDialogOpen') || false
 
@@ -72,7 +72,7 @@ export const NodeRenderer: React.FC<TreeNodeProps> = ({ node, privateTree, publi
     const handleClick = useCallback((e: React.MouseEvent) => {
         // Disable click when create resource dialog is open
         if (isCreateResourceDialogOpen) return
-        
+
         // Clear any existing timeout to prevent single click when double clicking
         if (clickTimeoutRef.current) {
             clearTimeout(clickTimeoutRef.current)
@@ -90,7 +90,7 @@ export const NodeRenderer: React.FC<TreeNodeProps> = ({ node, privateTree, publi
     const handleDoubleClick = useCallback((e: React.MouseEvent) => {
         // Disable double click when create resource dialog is open
         if (isCreateResourceDialogOpen) return
-        
+
         e.preventDefault()
         e.stopPropagation()
 
@@ -149,10 +149,10 @@ export const NodeRenderer: React.FC<TreeNodeProps> = ({ node, privateTree, publi
                             'flex items-center py-0.5 px-2 text-sm w-full select-none',
                             isSelected ? 'bg-gray-600 text-white' : 'text-gray-300',
                             // Dynamic cursor and hover styles based on dialog state
-                            isCreateResourceDialogOpen 
-                                ? (isFolder 
-                                    ? 'cursor-grab active:cursor-grabbing hover:bg-gray-700' 
-                                    : 'cursor-not-allowed opacity-50') 
+                            isCreateResourceDialogOpen
+                                ? (isFolder
+                                    ? 'cursor-grab active:cursor-grabbing hover:bg-gray-700'
+                                    : 'cursor-not-allowed opacity-50')
                                 : 'cursor-grab active:cursor-grabbing hover:bg-gray-700'
                         )}
                         style={{ paddingLeft: `${depth * 16 + 2}px` }}
@@ -165,7 +165,7 @@ export const NodeRenderer: React.FC<TreeNodeProps> = ({ node, privateTree, publi
                                 e.preventDefault()
                                 return
                             }
-                            
+
                             e.dataTransfer.setData('text/plain', node.key)
                             e.dataTransfer.setData('application/node-id', node.id)
                             e.dataTransfer.setData('application/node-type', isFolder ? 'folder' : 'file')
@@ -252,16 +252,17 @@ const CustomDialogContent = React.forwardRef<
 CustomDialogContent.displayName = "CustomDialogContent"
 
 const TreeRenderer: React.FC<TreeRendererProps> = ({ privateTree, publicTree, title, isPublic, triggerFocus }) => {
-    if (!privateTree && !publicTree) return null
     const tree = isPublic ? publicTree : privateTree
-    const { t } = useTranslation("resourceScene")
+
     const [isAnyDialogOpen, setIsAnyDialogOpen] = useState(false)
-    
+
     // State for Create Resource Node dialog
     const [resourceName, setResourceName] = useState('')
     const [resourceType, setResourceType] = useState('')
     const [targetFolder, setTargetFolder] = useState<string | null>(null)
     const [dragOver, setDragOver] = useState(false)
+
+    if (!privateTree && !publicTree) return null
 
     // Reset form when dialog closes
     const resetForm = () => {
@@ -285,10 +286,10 @@ const TreeRenderer: React.FC<TreeRendererProps> = ({ privateTree, publicTree, ti
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault()
         setDragOver(false)
-        
+
         const nodeType = e.dataTransfer.getData('application/node-type')
         const nodeId = e.dataTransfer.getData('application/node-id')
-        
+
         if (nodeType === 'folder' && nodeId) {
             // Find the node by ID to get its name
             const findNodeById = (node: ISceneNode, targetId: string): ISceneNode | null => {
@@ -301,7 +302,7 @@ const TreeRenderer: React.FC<TreeRendererProps> = ({ privateTree, publicTree, ti
                 }
                 return null
             }
-            
+
             const foundNode = findNodeById(tree!.root, nodeId)
             if (foundNode) {
                 setTargetFolder(foundNode.name)
@@ -319,7 +320,7 @@ const TreeRenderer: React.FC<TreeRendererProps> = ({ privateTree, publicTree, ti
     return (
         <>
             <div className='flex items-center z-10 bg-[#2A2C33] py-1 pl-1 text-sm font-semibold text-gray-200'>
-                <span className='ml-2'>{t(title)}</span>
+                <span className='ml-2'>{title}</span>
                 {tree === privateTree && (
                     <div className='flex items-center gap-0.5 ml-auto mr-2'>
                         <Dialog modal={false} onOpenChange={(open) => {
@@ -350,9 +351,9 @@ const TreeRenderer: React.FC<TreeRendererProps> = ({ privateTree, publicTree, ti
                                     <div className="grid gap-4">
                                         <div className="grid gap-3">
                                             <Label htmlFor="resource-name">Name</Label>
-                                            <Input 
-                                                id="resource-name" 
-                                                name="name" 
+                                            <Input
+                                                id="resource-name"
+                                                name="name"
                                                 value={resourceName}
                                                 onChange={(e) => setResourceName(e.target.value)}
                                                 placeholder="Enter resource name"
@@ -375,11 +376,10 @@ const TreeRenderer: React.FC<TreeRendererProps> = ({ privateTree, publicTree, ti
                                         <div className="grid gap-3">
                                             <Label>Target Folder</Label>
                                             <div
-                                                className={`border-2 h-16 border-dashed rounded-lg p-4 flex items-center justify-center transition-colors ${
-                                                    dragOver 
-                                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
-                                                        : 'border-gray-300 dark:border-gray-600'
-                                                }`}
+                                                className={`border-2 h-16 border-dashed rounded-lg p-4 flex items-center justify-center transition-colors ${dragOver
+                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
+                                                    : 'border-gray-300 dark:border-gray-600'
+                                                    }`}
                                                 onDragOver={handleDragOver}
                                                 onDragLeave={handleDragLeave}
                                                 onDrop={handleDrop}
@@ -410,8 +410,8 @@ const TreeRenderer: React.FC<TreeRendererProps> = ({ privateTree, publicTree, ti
                                         <DialogClose asChild>
                                             <Button variant="outline" className='cursor-pointer'>Cancel</Button>
                                         </DialogClose>
-                                        <Button 
-                                            type="submit" 
+                                        <Button
+                                            type="submit"
                                             className='cursor-pointer'
                                             disabled={!resourceName || !resourceType}
                                         >

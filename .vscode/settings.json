@@ -1,0 +1,53 @@
+{
+  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "editor.formatOnPaste": false, // required 
+  "editor.formatOnType": false, // required
+  "editor.formatOnSave": true, // optional 
+  "editor.formatOnSaveMode": "file", // required to format on save
+  "files.autoSave": "onFocusChange", // optional but recommended
+  "vs-code-prettier-eslint.prettierLast": false, // set as "true" to run 'prettier' last not first
+  "eslint.rules.customizations": [
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-explicit-any",
+    },
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-unused-vars",
+    },
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-empty-function",
+    },
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-non-null-assertion",
+    },
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-unsafe-assignment",
+    },
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-unsafe-return",
+    },
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-unsafe-function-type"
+    },
+    {
+      "severity": "off",
+      "rule": "@typescript-eslint/no-unused-expressions"
+    }
+  ],
+  "eslint.workingDirectories": ["client/src"],
+  "eslint.nodePath": "./client/src/node_modules",
+  "typescript.tsdk": "client/src/node_modules/typescript/lib",
+  "prettier.configPath": "./client/src/.prettierrc",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
+}

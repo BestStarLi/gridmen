@@ -22,7 +22,7 @@ export default function Hello() {
 
     return (
         <div className={'relative w-full h-full bg-[#1E1E1E]'}>
-            <canvas 
+            <canvas
                 ref={canvasRef}
                 key='helloCanvas'
                 className={'absolute w-full h-full  bg-[#292C33]'}>
